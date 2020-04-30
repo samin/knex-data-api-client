@@ -155,48 +155,53 @@ Object.assign(ClientRDSDataAPI.prototype, {
     });
   },
 
-  // Process the response as returned from the query, and format like the standard mysql engine
+  // Process the response as returned from the query.
   processResponse(obj) {
-    // Format insert
-    if (obj.method === "insert") {
-      obj.response = [obj.response.insertId];
-    }
+    return obj.response.records;
+  },
 
-    // Format select
-    if (obj.method === "select") {
-      // If no nested tables
-      if (!obj.options || !obj.options.nestTables) {
-        obj.response = obj.response.records;
-      }
-      // Else if nested tables
-      else {
-        let res = [];
-        const metadata = obj.response.columnMetadata;
-        const records = obj.response.records;
+  // // Process the response as returned from the query, and format like the standard mysql engine
+  // processResponse(obj) {
+  //   // Format insert
+  //   if (obj.method === "insert") {
+  //     obj.response = [obj.response.insertId];
+  //   }
 
-        // Iterate through the data
-        for (let i = 0; i < metadata.length; i++) {
-          const tableName = metadata[i].tableName;
-          const label = metadata[i].label;
+  //   // Format select
+  //   if (obj.method === "select") {
+  //     // If no nested tables
+  //     if (!obj.options || !obj.options.nestTables) {
+  //       obj.response = obj.response.records;
+  //     }
+  //     // Else if nested tables
+  //     else {
+  //       let res = [];
+  //       const metadata = obj.response.columnMetadata;
+  //       const records = obj.response.records;
 
-          // Iterate through responses
-          for (let j = 0; j < records.length; j++) {
-            if (!res[j]) res[j] = {};
-            if (!res[j][tableName]) res[j][tableName] = {};
-            res[j][tableName][label] = records[j][label];
-          }
-        }
-        obj.response = res;
-      }
-    }
+  //       // Iterate through the data
+  //       for (let i = 0; i < metadata.length; i++) {
+  //         const tableName = metadata[i].tableName;
+  //         const label = metadata[i].label;
 
-    // Format delete
-    if (obj.method === "del") {
-      obj.response = obj.response.numberOfRecordsUpdated;
-    }
+  //         // Iterate through responses
+  //         for (let j = 0; j < records.length; j++) {
+  //           if (!res[j]) res[j] = {};
+  //           if (!res[j][tableName]) res[j][tableName] = {};
+  //           res[j][tableName][label] = records[j][label];
+  //         }
+  //       }
+  //       obj.response = res;
+  //     }
+  //   }
 
-    return obj.response;
-  }
+  //   // Format delete
+  //   if (obj.method === "del") {
+  //     obj.response = obj.response.numberOfRecordsUpdated;
+  //   }
+
+  //   return obj.response;
+  // }
 });
 
 module.exports = ClientRDSDataAPI;
